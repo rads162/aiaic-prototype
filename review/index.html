@@ -1,0 +1,143 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>AIAIC prototype · review</title><style>
+    :root { --bg:#fff; --surface:#f2f2f2; --line:#c9c9c9; --ink:#1a1a1a; --ink-3:#5f5f5f; --stage:#dcdcdc; color-scheme: light; }
+    @media (prefers-color-scheme: dark) { :root { --bg:#161616; --surface:#222; --line:#444; --ink:#f0f0f0; --ink-3:#a0a0a0; --stage:#0d0d0d; color-scheme: dark; } }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body { display: flex; flex-direction: column; background: var(--stage); color: var(--ink); font: 14px/1.4 system-ui, "Segoe UI", "Nirmala UI", Roboto, Arial, sans-serif; }
+    .bar { background: var(--bg); border-bottom: 1px solid var(--line); padding: 8px 12px; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+    .title { font-weight: 600; margin-right: auto; display: flex; gap: 8px; align-items: center; }
+    .title small { font-weight: 400; color: var(--ink-3); }
+    .controls { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+    .group { display: flex; gap: 4px; align-items: center; }
+    .group > span { color: var(--ink-3); font-size: 12px; margin-right: 2px; }
+    button, select, a.btn { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; min-height: 34px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
+    select { max-width: 260px; }
+    button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+    button:disabled { opacity: .4; cursor: default; }
+    :focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+    #toggle { display: none; }
+    .jbar { background: var(--surface); border-bottom: 1px solid var(--line); padding: 6px 12px; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+    .jbar[hidden] { display: none; }
+    .steps { display: flex; flex-wrap: wrap; gap: 4px; }
+    .steps button { min-height: 28px; padding: 2px 9px; font-size: 12px; }
+    .note { color: var(--ink-3); font-size: 12px; }
+    .stage { flex: 1; min-height: 0; overflow: auto; display: flex; justify-content: center; align-items: flex-start; }
+    .frame { background: var(--bg); transform-origin: top left; flex: none; }
+    .frame.device { box-shadow: 0 0 0 1px var(--line), 0 6px 24px rgba(0,0,0,.18); margin: 12px 0; }
+    iframe { border: 0; display: block; width: 100%; height: 100%; background: #fff; }
+    @media (max-width: 760px) {
+      #toggle { display: inline-flex; }
+      .controls { display: none; width: 100%; }
+      .bar.open .controls { display: flex; }
+      .devices { display: none; }
+      .title small { display: none; }
+    }
+  </style></head> <body> <header class="bar" id="bar"> <div class="title">AIAIC lo-fi prototype <small>· review view · draft and placeholder content</small></div> <button id="toggle" type="button" aria-expanded="false" aria-controls="controls">Controls</button> <div class="controls" id="controls"> <label class="group"><span>Page</span><select id="page" aria-label="Go to page"></select></label> <div class="group" role="group" aria-label="Language"><span>Language</span><button type="button" data-lang="en">EN</button><button type="button" data-lang="mr" lang="mr">मराठी</button></div> <div class="group devices" role="group" aria-label="Screen size"><span>Screen</span> <button type="button" data-dev="fit" title="Fill this window">Fit</button> <button type="button" data-dev="1440" title="Desktop, 1440 px wide">Desktop</button> <button type="button" data-dev="1024" title="Laptop / small desktop, 1024 px wide">Laptop</button> <button type="button" data-dev="768" title="Tablet, 768 × 1024">Tablet</button> <button type="button" data-dev="375" title="Mobile, 375 × 812">Mobile</button> </div> <label class="group"><span>Journey</span><select id="journey" aria-label="Priority journey"><option value="">None</option><option value="J1 Government">J1 Government</option><option value="J2 Startup">J2 Startup</option><option value="J3 Researcher">J3 Researcher</option><option value="J4 Technology company">J4 Technology company</option><option value="J5 Investor">J5 Investor</option><option value="J6 FPO / farmer">J6 FPO / farmer</option><option value="J7 International">J7 International</option></select></label> <button type="button" id="ph" aria-pressed="false" title="Outline placeholders and text still awaiting content">Show placeholders</button> <button type="button" id="copy">Copy link</button> <a class="btn" id="public" target="_blank" rel="noopener">Open public view ↗</a> </div> </header> <div class="jbar" id="jbar" hidden> <button type="button" id="prev">‹ Previous</button> <div class="steps" id="steps"></div> <button type="button" id="next">Next ›</button> <span class="note" id="jnote"></span> </div> <main class="stage" id="stage"><div class="frame" id="frame"><iframe id="view" title="Prototype page"></iframe></div></main> <script type="application/json" id="pages-data">[{"path":"","title":"Home"},{"path":"about/","title":"About AIAIC"},{"path":"about/governance/","title":"Governance"},{"path":"about/governance/decisions/","title":"Decisions register"},{"path":"about/governance/minutes/","title":"Minutes archive"},{"path":"about/governance/slsc/","title":"SLSC: State-Level Steering Committee"},{"path":"about/governance/sltc/","title":"SLTC: State-Level Technical Committee"},{"path":"about/leadership/","title":"Leadership & team"},{"path":"about/mandate/","title":"Mandate & role"},{"path":"accessibility/","title":"Accessibility statement"},{"path":"ai4agri/","title":"AI4Agri"},{"path":"ai4agri/2026/","title":"AI4Agri 2026"},{"path":"contact/","title":"Contact"},{"path":"directory/","title":"Ecosystem directory"},{"path":"directory/bskkv/","title":"Dr. Balasaheb Sawant Konkan Krishi Vidyapeeth, Dapoli"},{"path":"directory/implementer-1/","title":"[Implementing organisation 1]"},{"path":"directory/implementer-2/","title":"[Implementing organisation 2]"},{"path":"directory/implementer-3/","title":"[Implementing organisation 3]"},{"path":"directory/magnet/","title":"MAGNET project"},{"path":"directory/mpkv/","title":"Mahatma Phule Krishi Vidyapeeth, Rahuri"},{"path":"directory/pdkv/","title":"Dr. Panjabrao Deshmukh Krishi Vidyapeeth, Akola"},{"path":"directory/pocra/","title":"Nanaji Deshmukh Krishi Sanjivani Prakalp (POCRA)"},{"path":"directory/smart/","title":"SMART project"},{"path":"directory/vnmkv/","title":"Vasantrao Naik Marathwada Krishi Vidyapeeth, Parbhani"},{"path":"directory/wur/","title":"Wageningen University & Research"},{"path":"documents/","title":"Documents & publications"},{"path":"ecosystem/","title":"Ecosystem"},{"path":"ecosystem/capacity-building/","title":"Capacity building"},{"path":"ecosystem/partner-with-aiaic/","title":"Partner with AIAIC"},{"path":"faqs/","title":"FAQs"},{"path":"for/farmers/","title":"For farmers & FPOs"},{"path":"for/government/","title":"For government"},{"path":"for/investors/","title":"For investors & partners"},{"path":"for/researchers/","title":"For researchers & universities"},{"path":"for/startups/","title":"For startups & companies"},{"path":"glossary/","title":"Glossary"},{"path":"help/","title":"Help & feedback"},{"path":"innovation/","title":"Innovation funding"},{"path":"innovation/how-proposals-are-evaluated/","title":"How proposals are evaluated"},{"path":"network/","title":"Research network (AI3Cs)"},{"path":"network/ai3c-bskkv-dapoli/","title":"AI3C, Dr BSKKV Dapoli"},{"path":"network/ai3c-mpkv-rahuri/","title":"AI3C, MPKV Rahuri"},{"path":"network/ai3c-pdkv-akola/","title":"AI3C, PDKV Akola"},{"path":"network/ai3c-vnmkv-parbhani/","title":"AI3C, VNMKV Parbhani"},{"path":"news/","title":"News"},{"path":"news/ai3c-recruitment/","title":"AI Innovation & Incubation Centres begin recruiting"},{"path":"news/cfp1-proposals-finalised/","title":"First Call for Proposals: three proposals finalised"},{"path":"news/mahaagx-launch/","title":"MahaAgX launched at AI4Agri 2026"},{"path":"notices/","title":"Notices & careers"},{"path":"opportunities/","title":"Opportunities"},{"path":"opportunities/cfp-1-2025/","title":"First Call for Proposals (CfP 1)"},{"path":"partnerships/","title":"Partnerships"},{"path":"partnerships/wur-mou-2026/","title":"MoU with Wageningen University & Research"},{"path":"platforms/","title":"Digital public infrastructure"},{"path":"platforms/mahaagx/","title":"MahaAgX"},{"path":"platforms/mahavistaar/","title":"MahaVISTAAR"},{"path":"platforms/remote-sensing/","title":"Remote Sensing & Geospatial Intelligence Engine"},{"path":"platforms/traceability/","title":"Agri-Food Traceability & Quality Certification Platform"},{"path":"policy/","title":"MahaAgri-AI Policy"},{"path":"policy/in-action/","title":"Policy in action"},{"path":"policy/priorities/","title":"Policy priorities"},{"path":"policy/priorities/p1/","title":"P1: AIAIC and the statewide research network"},{"path":"policy/priorities/p2/","title":"P2: Agriculture Data Exchange and Sandbox (MahaAgX)"},{"path":"policy/priorities/p3/","title":"P3: Remote Sensing & Geospatial Intelligence Engine"},{"path":"policy/priorities/p4/","title":"P4: GenAI farmer advisory (MahaVISTAAR)"},{"path":"policy/priorities/p5/","title":"P5: Agri-food traceability & quality certification"},{"path":"policy/priorities/p6/","title":"P6: Innovation funding and support"},{"path":"policy/priorities/p7/","title":"P7: Capacity building and last-mile adoption"},{"path":"policy/priorities/p8/","title":"P8: Global AI in Agriculture Conference & Investor Summit (AI4Agri)"},{"path":"policy/roadmap/","title":"Roadmap"},{"path":"privacy/","title":"Privacy policy"},{"path":"problem-statements/","title":"Problem statements"},{"path":"problem-statements/cold-chain/","title":"Reducing post-harvest losses through tech-enabled cold chain management"},{"path":"problem-statements/crop-damage-insurance/","title":"Assessing crop damage and yield estimation for insurance claims"},{"path":"problem-statements/crop-selection/","title":"Predictive analytics for crop rotation and selection"},{"path":"problem-statements/drone-spraying/","title":"Precision pesticide spraying using drones"},{"path":"problem-statements/export-traceability/","title":"Traceability and certification for export markets"},{"path":"problem-statements/fpo-logistics/","title":"Efficient logistics and aggregation for FPOs"},{"path":"problem-statements/hyperlocal-advisories/","title":"Hyper-local crop-specific advisories"},{"path":"problem-statements/labour-automation/","title":"Automated farm operations for labour-intensive tasks"},{"path":"problem-statements/mechanization-services/","title":"Integrated platform for mechanization services"},{"path":"problem-statements/nutrient-deficiency/","title":"Detection of nutrient deficiencies in crops"},{"path":"problem-statements/nutrient-management/","title":"Nutrient management based on real-time soil analysis"},{"path":"problem-statements/pest-surveillance/","title":"Real-time pest and disease surveillance for horticulture crops"},{"path":"problem-statements/price-discovery/","title":"Real-time market price discovery and demand forecasting"},{"path":"problem-statements/quality-grading/","title":"Automated quality grading and sorting at the farm gate"},{"path":"problem-statements/robotic-harvesting/","title":"Robotic harvesting for high-value crops"},{"path":"problem-statements/small-holdings/","title":"Affordable and accessible tech for small landholdings"},{"path":"problem-statements/water-usage/","title":"Optimising water usage for varied crops in water-stressed regions"},{"path":"projects/","title":"Projects & pilots"},{"path":"projects/project-1/","title":"[Project 1 title, from CR-01]"},{"path":"projects/project-2/","title":"[Project 2 title, from CR-01]"},{"path":"projects/project-3/","title":"[Project 3 title, from CR-01]"},{"path":"resources/","title":"Resources"},{"path":"search/","title":"Search"},{"path":"sitemap/","title":"Sitemap"},{"path":"terms/","title":"Terms, copyright & hyperlink policy"},{"path":"transparency/","title":"Transparency & RTI"}]</script> <script type="application/json" id="journeys-data">{"J1 Government":["","about/mandate","about/governance","about/governance/decisions","projects","projects/project-1","policy/in-action","documents"],"J2 Startup":["projects","opportunities","opportunities/cfp-1-2025","problem-statements/pest-surveillance","innovation/how-proposals-are-evaluated","projects"],"J3 Researcher":["for/researchers","network","network/ai3c-mpkv-rahuri","problem-statements","opportunities/cfp-1-2025","platforms/mahaagx"],"J4 Technology company":["for/investors","ecosystem/partner-with-aiaic","platforms","platforms/mahaagx","projects","about/leadership","contact"],"J5 Investor":["ai4agri/2026","projects","projects/project-1","directory/implementer-1","ecosystem/partner-with-aiaic","ai4agri","contact"],"J6 FPO / farmer":["","for/farmers","platforms/mahavistaar","for/farmers","projects","projects/project-1","ecosystem/partner-with-aiaic"],"J7 International":["about","policy","about/governance","platforms","partnerships","ai4agri/2026","about/leadership","contact"]}</script> <script>
+  (() => {
+    const $ = (id) => document.getElementById(id);
+    const PAGES = JSON.parse($('pages-data').textContent);       // [{ path: 'about/mandate/', title }]
+    const JOURNEYS = JSON.parse($('journeys-data').textContent); // { name: ['', 'about/mandate', ...] }
+    const SIZES = { 1440: [1440, 900], 1024: [1024, 768], 768: [768, 1024], 375: [375, 812] };
+    const base = new URL('../', location.href);                  // site root, wherever it is hosted
+    const view = $('view'), frame = $('frame'), stage = $('stage');
+    const norm = (p) => (p || '').replace(/index\.html$/, '').replace(/^\/+/, '');
+    const withSlash = (p) => (p && !p.endsWith('/') ? p + '/' : p);
+    const state = { p: 'en/', d: 'fit', j: '', ph: false };
+
+    // Read and write the view's state in the address, so a copied link reopens the same view.
+    function readHash() {
+      const q = new URLSearchParams(location.hash.slice(1));
+      state.p = norm(q.get('p')) || 'en/';
+      state.d = SIZES[q.get('d')] ? q.get('d') : 'fit';
+      state.j = JOURNEYS[q.get('j')] ? q.get('j') : '';
+      state.ph = q.get('ph') === '1';
+    }
+    function writeHash() {
+      const q = new URLSearchParams({ p: state.p, d: state.d });
+      if (state.j) q.set('j', state.j);
+      if (state.ph) q.set('ph', '1');
+      history.replaceState(null, '', '#' + q.toString());
+    }
+    const lang = () => (state.p.startsWith('mr/') ? 'mr' : 'en');
+    const inner = () => state.p.replace(/^(en|mr)\/?/, '');
+
+    // Page list, grouped by section, built from the pages that exist in this build.
+    const sel = $('page');
+    const groups = {};
+    PAGES.forEach((pg) => { const g = pg.path.split('/')[0] || 'home'; (groups[g] = groups[g] || []).push(pg); });
+    Object.entries(groups).forEach(([g, list]) => {
+      const og = document.createElement('optgroup'); og.label = g === 'home' ? 'Home' : g.replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase());
+      list.forEach((pg) => { const o = document.createElement('option'); o.value = pg.path; o.textContent = pg.title; og.append(o); });
+      sel.append(og);
+    });
+
+    function go(path) { state.p = withSlash(norm(path)); view.src = new URL(state.p + 'index.html', base).href; sync(); }
+
+    function layout() {
+      const narrow = innerWidth <= 760;
+      const d = narrow ? 'fit' : state.d;
+      if (d === 'fit') { frame.className = 'frame'; frame.style.cssText = 'width:100%;height:100%;transform:none'; stage.style.overflow = 'hidden'; return; }
+      const [w, h] = SIZES[d];
+      const availW = stage.clientWidth - 24, availH = stage.clientHeight - 24;
+      const s = Math.min(1, availW / w);
+      const fullH = w >= 1024 ? Math.max(h, availH / s) : h;      // desktop sizes use the whole height
+      frame.className = 'frame device';
+      frame.style.cssText = `width:${w}px;height:${fullH}px;transform:scale(${s});margin-bottom:${12 - fullH * (1 - s)}px;margin-right:${-w * (1 - s)}px`;
+      stage.style.overflow = 'auto';
+    }
+
+    function sync() {
+      sel.value = inner() ? withSlash(inner()) : '';
+      document.querySelectorAll('[data-lang]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === lang())));
+      document.querySelectorAll('[data-dev]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.dev === state.d)));
+      $('ph').setAttribute('aria-pressed', String(state.ph));
+      $('journey').value = state.j;
+      $('public').href = new URL(state.p + 'index.html', base).href;
+      const steps = JOURNEYS[state.j];
+      $('jbar').hidden = !steps;
+      if (steps) {
+        const here = steps.findIndex((s) => withSlash(s) === withSlash(inner()));
+        $('steps').replaceChildren(...steps.map((s, i) => {
+          const b = document.createElement('button'); b.type = 'button'; b.textContent = String(i + 1);
+          b.title = s || 'home'; b.setAttribute('aria-pressed', String(i === here)); b.onclick = () => { stepIdx = i; go(lang() + '/' + s); }; return b;
+        }));
+        if (here >= 0) stepIdx = here;
+        $('prev').disabled = stepIdx <= 0; $('next').disabled = stepIdx >= steps.length - 1;
+        $('jnote').textContent = here >= 0 ? `${state.j}: step ${here + 1} of ${steps.length}` : `${state.j}: you have left the journey path. Pick a step to return.`;
+      }
+      writeHash(); layout();
+    }
+    let stepIdx = 0;
+
+    // Mark placeholders inside the page (draft markers, "[...]" text awaiting content).
+    function marks() {
+      let doc; try { doc = view.contentDocument; } catch (e) { return; }
+      if (!doc || !doc.documentElement) return;
+      if (!doc.getElementById('review-ph-css')) {
+        const st = doc.createElement('style'); st.id = 'review-ph-css';
+        st.textContent = 'html.review-ph .badge.placeholder,html.review-ph .tx-pending,html.review-ph .ph,html.review-ph .review-ph-text{outline:3px dashed currentColor;outline-offset:2px;background-image:repeating-linear-gradient(45deg,rgba(128,128,128,.18) 0 6px,transparent 6px 12px)}';
+        doc.head.append(st);
+        const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);
+        for (let n; (n = walker.nextNode());) if (/^\s*\[[^\]]{3,}\]?/.test(n.nodeValue) && n.parentElement) n.parentElement.classList.add('review-ph-text');
+      }
+      doc.documentElement.classList.toggle('review-ph', state.ph);
+    }
+
+    view.addEventListener('load', () => {
+      try { const p = view.contentWindow.location.pathname; const b = base.pathname; if (p.startsWith(b)) state.p = withSlash(norm(p.slice(b.length))) || 'en/'; } catch (e) {}
+      sync(); marks();
+    });
+    sel.onchange = () => go(lang() + '/' + sel.value);
+    document.querySelectorAll('[data-lang]').forEach((b) => (b.onclick = () => go(b.dataset.lang + '/' + inner())));
+    document.querySelectorAll('[data-dev]').forEach((b) => (b.onclick = () => { state.d = b.dataset.dev; sync(); }));
+    $('journey').onchange = (e) => { state.j = e.target.value; stepIdx = 0; if (state.j) go(lang() + '/' + JOURNEYS[state.j][0]); else sync(); };
+    $('prev').onclick = () => { const s = JOURNEYS[state.j]; if (s && stepIdx > 0) { stepIdx--; go(lang() + '/' + s[stepIdx]); } };
+    $('next').onclick = () => { const s = JOURNEYS[state.j]; if (s && stepIdx < s.length - 1) { stepIdx++; go(lang() + '/' + s[stepIdx]); } };
+    $('ph').onclick = () => { state.ph = !state.ph; sync(); marks(); };
+    $('copy').onclick = async () => { try { await navigator.clipboard.writeText(location.href); $('copy').textContent = 'Copied'; } catch (e) { prompt('Copy this link:', location.href); } setTimeout(() => ($('copy').textContent = 'Copy link'), 1500); };
+    $('toggle').onclick = () => { const open = $('bar').classList.toggle('open'); $('toggle').setAttribute('aria-expanded', String(open)); layout(); };
+    addEventListener('resize', layout);
+    addEventListener('hashchange', () => { readHash(); go(state.p); }); // a pasted review link opened in the same tab
+    readHash(); go(state.p);
+  })();
+  </script> </body> </html>
